@@ -1,4 +1,4 @@
-__title__ = 'sloth-ci.validators.dummy'
+﻿__title__ = 'sloth-ci.validators.dummy'
 __version__ = '1.0.0'
 __author__ = 'Konstantin Molchanov'
 __license__ = 'MIT'
@@ -7,7 +7,7 @@ __license__ = 'MIT'
 def validate(request, validation_data):
     """Dummy validator.
 
-    A validator must implement the ``validate`` function with params ``request``, which is a CherryPy request object, and ``validation_data``�a dict with values to check the payload against.
+    A validator must implement the ``validate`` function with params ``request``, which is a CherryPy request object, and ``validation_data``—a dict with values to check the payload against.
 
     The ``validate`` function must return a tuple of validation status (True or False), success or failure message, and a dictionary with the data extracted from the payload. 
 

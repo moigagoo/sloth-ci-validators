@@ -1,4 +1,4 @@
-__title__ = 'sloth-ci.validators.bitbucket'
+﻿__title__ = 'sloth-ci.validators.bitbucket'
 __version__ = '1.0.0'
 __author__ = 'Konstantin Molchanov'
 __license__ = 'MIT'
