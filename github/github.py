@@ -1,17 +1,22 @@
-﻿__title__ = 'sloth-ci.validators.github'
-__version__ = '1.0.0'
+﻿'''GitHub Sloth CI validator that validates the GitHub payload against username and repo name (obtained from the Sloth app config).'''
+
+
+__title__ = 'sloth-ci.validators.github'
+__description__ = 'GitHub validator for Sloth CI'
+__version__ = '1.0.1'
 __author__ = 'Konstantin Molchanov'
+__author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
 
 
 def validate(request, validation_data):
-    """Validate GitHub payload against repo name (obtained from the Sloth app config).
+    '''Validate GitHub payload against repo name (obtained from the Sloth app config).
 
     :param request_params: payload to validate
     :param validation_data: dictionary with the key ``repo`` (in the form "username/repo")
 
     :returns: (True, success message, extracted data dict) if the payload is valid, (False, error message, extracted data dict) otherwise
-    """
+    '''
 
     from json import loads
 
@@ -33,7 +38,7 @@ def validate(request, validation_data):
         parsed_payload = loads(payload)
 
         repo = parsed_payload['repository']['owner']['name'] + '/' + parsed_payload['repository']['name']
-        
+
         branch = parsed_payload['ref'].split('/')[-1]
 
         if repo != validation_data['repo']:
