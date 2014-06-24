@@ -1,12 +1,10 @@
-'''Dummy validator.
+﻿'''Dummy validator.
 
 Dummy Sloth CI validator that checks if the ``message`` param in a ``GET`` request is the same the ``message`` value in the ``provider_data`` config section.
 
 Use this validator as a reference when writing *real* validators.
 
-A validator must implement the ``validate`` function with params ``request``, which is a CherryPy request object, and ``validation_data``?�a dict with values to check the payload against.
-
-The ``validate`` function must return a tuple of validation status (True or False), success or failure message, and a dictionary with the data extracted from the payload.
+A validator must implement the ``validate`` function with params ``request``, which is a CherryPy request object, and ``validation_data``—a dict with values to check the payload against.
 '''
 
 
