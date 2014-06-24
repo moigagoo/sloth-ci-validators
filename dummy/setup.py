@@ -9,11 +9,11 @@ setup(
     name=validator.__title__,
     version=validator.__version__,
     author=validator.__author__,
-    description='Dummy validator for Sloth CI',
-    long_description='Dummy Sloth CI validator that checks if the ``message`` param in a ``GET`` request is the same the ``message`` value in the ``provider_data`` config section.',
-    author_email='moigagoo@live.com',
+    description=validator.__description__,
+    long_description=validator.__doc__,
+    author_email=validator.__author_email__,
     url='https://bitbucket.org/moigagoo/sloth-ci-validators',
-    py_modules=['%s.dummy' % package],
+    py_modules=['%s.%s' % (package, validator.__name__)],
     package_dir={package: '.'},
     install_requires = [
         'sloth_ci>=0.6.3'
