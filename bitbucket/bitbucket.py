@@ -1,17 +1,22 @@
-﻿__title__ = 'sloth-ci.validators.bitbucket'
-__version__ = '1.0.0'
+﻿'''Bitbucket Sloth CI validator that validates the Bitbucket payload against username and repo name (obtained from the Sloth app config).'''
+
+
+__title__ = 'sloth-ci.validators.bitbucket'
+__description__ = 'Bitbucket validator for Sloth CI'
+__version__ = '1.0.1'
 __author__ = 'Konstantin Molchanov'
+__author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
 
 
 def validate(request, validation_data):
-    """Validate Bitbucket payload against repo name (obtained from the Sloth app config).
+    '''Validate Bitbucket payload against repo name (obtained from the Sloth app config).
 
     :param request_params: payload to validate
     :param validation_data: dictionary with the key ``repo`` (in the form "username/repo")
 
     :returns: (True, success message, extracted data dict) if the payload is valid, (False, error message, extracted data dict) otherwise
-    """
+    '''
 
     from json import loads
 

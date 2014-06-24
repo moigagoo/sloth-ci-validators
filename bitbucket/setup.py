@@ -9,11 +9,11 @@ setup(
     name=validator.__title__,
     version=validator.__version__,
     author=validator.__author__,
-    description='Bitbucket validator for Sloth CI',
-    long_description='Bitbucket Sloth CI validator that validates the Bitbucket payload against repo name (obtained from the Sloth app config).',
-    author_email='moigagoo@live.com',
+    description=validator.__description__,
+    long_description=validator.__doc__,
+    author_email=validator.__author_email__,
     url='https://bitbucket.org/moigagoo/sloth-ci-validators',
-    py_modules=['%s.bitbucket' % package],
+    py_modules=['%s.%s' % (package, validator.__name__)],
     package_dir={package: '.'},
     install_requires = [
         'sloth_ci>=0.6.3'
