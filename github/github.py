@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -23,14 +23,14 @@ def validate(request, validation_data):
     from ipaddress import ip_address, ip_network
 
     if request.method != 'POST':
-        return (False, 'Payload validation failed: Wrong method, POST expected, got {method}.', {'method': request.method})
+        return (405, 'Payload validation failed: Wrong method, POST expected, got {method}.', {'method': request.method})
 
     trusted_ips = ip_network('192.30.252.0/22')
 
     remote_ip = ip_address(request.headers['Remote-Addr'])
 
     if remote_ip not in trusted_ips:
-        return (False, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
+        return (403, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
 
     try:
         payload = request.params.get('payload')
@@ -42,9 +42,9 @@ def validate(request, validation_data):
         branch = parsed_payload['ref'].split('/')[-1]
 
         if repo != validation_data['repo']:
-            return (False, 'Payload validation failed: repo mismatch. Repo: {repo}', {'repo': repo})
+            return (403, 'Payload validation failed: repo mismatch. Repo: {repo}', {'repo': repo})
 
-        return (True, 'Payload validated. Branch: {branch}', {'branch': branch})
+        return (200, 'Payload validated. Branch: {branch}', {'branch': branch})
 
     except Exception as e:
-        return (False, 'Payload validation failed: %s' % e, {})
+        return (400, 'Payload validation failed: %s' % e, {})
