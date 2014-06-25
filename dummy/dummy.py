@@ -10,7 +10,7 @@ A validator must implement the ``validate`` function with params ``request``, wh
 
 __title__ = 'sloth-ci.validators.dummy'
 __description__ = 'Dummy validator for Sloth CI'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -25,13 +25,13 @@ def validate(request, validation_data):
     '''
 
     if request.method != 'GET':
-        return (False, 'Payload validation failed: Wrong method, GET expected, got {method}.', {'method': request.method})
+        return (405, 'Payload validation failed: Wrong method, GET expected, got {method}.', {'method': request.method})
 
     message = request.params.get('message')
 
     valid_message = validation_data.get('message')
 
     if message and message == valid_message:
-        return (True, 'Payload validated. Message: {message}', {'message': message})
+        return (200, 'Payload validated. Message: {message}', {'message': message})
     else:
-        return (False, 'Payload validation failed. Message: {message}', {'message': message})
+        return (403, 'Payload validation failed. Message: {message}', {'message': message})
