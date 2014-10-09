@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -25,7 +25,7 @@ def validate(request, validation_data):
 
     trusted_ips = ['131.103.20.165', '131.103.20.166']
 
-    remote_ip = request.headers['Remote-Addr']
+    remote_ip = request.remote.ip
 
     if remote_ip not in trusted_ips:
         return (403, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
