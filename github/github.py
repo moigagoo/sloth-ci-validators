@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -20,14 +20,14 @@ def validate(request, validation_data):
 
     from json import loads
 
-    from ipaddress import ip_address, ip_network
+    from ipaddress import ip_network
 
     if request.method != 'POST':
         return (405, 'Payload validation failed: Wrong method, POST expected, got {method}.', {'method': request.method})
 
     trusted_ips = ip_network('192.30.252.0/22')
 
-    remote_ip = ip_address(request.headers['Remote-Addr'])
+    remote_ip = request.remote.ip
 
     if remote_ip not in trusted_ips:
         return (403, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
