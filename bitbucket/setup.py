@@ -18,7 +18,7 @@ setup(
     install_requires = [
         'sloth_ci>=0.6.3'
     ],
-    license='MIT',
+    license=validator.__license__,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
