@@ -1,4 +1,4 @@
-﻿'''GitHub Sloth CI validator that validates the GitHub payload against username and repo name (obtained from the Sloth app config).'''
+﻿'''GitHub Sloth CI validator that validates the `GitHub <https://github.com/>`_ payload against username and repo name (obtained from the Sloth app config).'''
 
 
 __title__ = 'sloth-ci.validators.github'
