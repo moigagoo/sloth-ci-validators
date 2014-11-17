@@ -10,7 +10,7 @@ A validator must implement the ``validate(request, validation_data)`` function. 
 
 __title__ = 'sloth-ci.validators.dummy'
 __description__ = 'Dummy validator for Sloth CI'
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
