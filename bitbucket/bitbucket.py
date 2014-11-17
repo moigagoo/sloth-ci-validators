@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
