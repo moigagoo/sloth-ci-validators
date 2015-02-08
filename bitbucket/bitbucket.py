@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -15,33 +15,39 @@ def validate(request, validation_data):
     :param request_params: payload to validate
     :param validation_data: dictionary with the key ``repo`` (in the form "username/repo")
 
-    :returns: (True, success message, extracted data dict) if the payload is valid, (False, error message, extracted data dict) otherwise
+    :returns: (status, message, list of extracted param dicts)
     '''
 
     from json import loads
 
     if request.method != 'POST':
-        return (405, 'Payload validation failed: Wrong method, POST expected, got {method}.', {'method': request.method})
+        return (405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
 
     trusted_ips = ['131.103.20.165', '131.103.20.166']
 
     remote_ip = request.remote.ip
 
     if remote_ip not in trusted_ips:
-        return (403, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
+        return (403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
 
     try:
         payload = request.params.get('payload')
 
         parsed_payload = loads(payload)
 
-        repo = parsed_payload['repository']['owner'] + '/' + parsed_payload['repository']['slug']
-        branch = parsed_payload['commits'][-1]['branch']
+        repo = '{owner}/{slug}'.format(
+            owner=parsed_payload['repository']['owner'],
+            slug=parsed_payload['repository']['slug']
+        )
 
         if repo != validation_data['repo']:
-            return (403, 'Payload validation failed: repo mismatch. Repo: {repo}', {'repo': repo})
+            return (403, 'Payload validation failed: repo mismatch. Repo: %s' % repo, [])
 
-        return (200, 'Payload validated. Branch: {branch}', {'branch': branch})
+        branches = {commit['branch'] for commit in parsed_payload['commits']}
+
+        param_dicts = [{'branch': branch} for branch in branches]
+
+        return (200, 'Payload validated. Branches: %s' % ', '.join(branches), param_dicts)
 
     except Exception as e:
-        return (400, 'Payload validation failed: %s' % e, {})
+        return (400, 'Payload validation failed: %s' % e, [])
