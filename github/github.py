@@ -3,7 +3,7 @@
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -15,7 +15,7 @@ def validate(request, validation_data):
     :param request_params: payload to validate
     :param validation_data: dictionary with the key ``repo`` (in the form "username/repo")
 
-    :returns: (True, success message, extracted data dict) if the payload is valid, (False, error message, extracted data dict) otherwise
+    :returns: (status, message, list of extracted param dicts
     '''
 
     from json import loads
@@ -23,14 +23,14 @@ def validate(request, validation_data):
     from ipaddress import ip_network
 
     if request.method != 'POST':
-        return (405, 'Payload validation failed: Wrong method, POST expected, got {method}.', {'method': request.method})
+        return (405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
 
     trusted_ips = ip_network('192.30.252.0/22')
 
     remote_ip = request.remote.ip
 
     if remote_ip not in trusted_ips:
-        return (403, 'Payload validation failed: Unverified remote IP: {ip}.', {'ip': remote_ip})
+        return (403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
 
     try:
         payload = request.params.get('payload')
@@ -42,9 +42,9 @@ def validate(request, validation_data):
         branch = parsed_payload['ref'].split('/')[-1]
 
         if repo != validation_data['repo']:
-            return (403, 'Payload validation failed: repo mismatch. Repo: {repo}', {'repo': repo})
+            return (403, 'Payload validation failed: repo mismatch. Repo: %s' % repo, [])
 
-        return (200, 'Payload validated. Branch: {branch}', {'branch': branch})
+        return (200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
 
     except Exception as e:
-        return (400, 'Payload validation failed: %s' % e, {})
+        return (400, 'Payload validation failed: %s' % e, [])
