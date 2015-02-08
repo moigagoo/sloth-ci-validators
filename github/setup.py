@@ -16,7 +16,7 @@ setup(
     py_modules=['%s.%s' % (package, validator.__name__)],
     package_dir={package: '.'},
     install_requires = [
-        'sloth_ci>=0.6.3'
+        'sloth_ci>=1.1.9'
     ],
     license=validator.__license__,
     classifiers=[
