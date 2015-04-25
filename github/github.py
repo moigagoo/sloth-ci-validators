@@ -21,7 +21,7 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.0.5'
+__version__ = '1.0.6'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -31,9 +31,9 @@ def validate(request, validation_data):
     '''Validate GitHub payload against repo name (obtained from the Sloth app config).
 
     :param request_params: payload to validate
-    :param validation_data: dictionary with the key ``repo`` (in the form "username/repo")
+    :param validation_data: dictionary with the keys ``owner``, ``repo``, and ``branches``
 
-    :returns: (status, message, list of extracted param dicts
+    :returns: (status, message, list of extracted param dicts)
     '''
 
     from json import loads
@@ -55,12 +55,22 @@ def validate(request, validation_data):
 
         parsed_payload = loads(payload)
 
-        repo = parsed_payload['repository']['owner']['name'] + '/' + parsed_payload['repository']['name']
+        owner = parsed_payload['repository']['owner']['name']
 
-        branch = parsed_payload['ref'].split('/')[-1]
+        if owner != validation_data['owner']:
+            return (403, 'Payload validation failed: wrong owner: %s' % owner, [])
+
+        repo = parsed_payload['repository']['name']
 
         if repo != validation_data['repo']:
-            return (403, 'Payload validation failed: repo mismatch. Repo: %s' % repo, [])
+            return (403, 'Payload validation failed: wrong repository: %s' % repo, [])
+
+        branch = {parsed_payload['ref'].split('/')[-1]}
+
+        allowed_branches = set(validation_data.get('branches', branches))
+
+        if not branches & allowed_branches:
+            return (403, 'Payload validation failed: wrong branches: %s' % branches, [])
 
         return (200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
 
