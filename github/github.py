@@ -65,7 +65,7 @@ def validate(request, validation_data):
         if repo != validation_data['repo']:
             return (403, 'Payload validation failed: wrong repository: %s' % repo, [])
 
-        branch = {parsed_payload['ref'].split('/')[-1]}
+        branches = {parsed_payload['ref'].split('/')[-1]}
 
         allowed_branches = set(validation_data.get('branches', branches))
 
