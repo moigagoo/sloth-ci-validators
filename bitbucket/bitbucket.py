@@ -1,4 +1,4 @@
-﻿'''Bitbucket Sloth CI validator that validates the `Bitbucket <https://bitbucket.org/>`_ payload against username and repo name (obtained from the Sloth app config).
+'''Sloth CI validator for `Bitbucket <https://bitbucket.org/>`_ push events.
 
 Usage in the app config::
 
@@ -21,49 +21,49 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.6'
+__version__ = '1.0.7'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
 
 
 def validate(request, validation_data):
-    '''Validate Bitbucket payload against repo name (obtained from the Sloth app config).
+    '''Check payload from Bitbucket: the origin IP must be genuine; the repo owner and title must be valid.
 
-    :param request_params: payload to validate
-    :param validation_data: dictionary with the keys ``owner``, ``repo``, and ``branches``
+    :param request_params: CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
+       ml#cherrypy._cprequest.Request>`_ object instance representing the incoming request
+    :param validation_data: dictionary with the keys ``owner``, ``repo``, and ``branches``, pars
+       ed from the config
 
     :returns: (status, message, list of extracted param dicts)
     '''
 
-    from json import loads
+    from ipaddress import ip_address, ip_network
 
     if request.method != 'POST':
         return (405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
 
-    trusted_ips = ['131.103.20.165', '131.103.20.166']
+    trusted_ips = (ip_network(ip_range) for ip_range in ('131.103.20.160/27', '165.254.145.0/26', '104.192.143.0/24'))
 
-    remote_ip = request.remote.ip
+    remote_ip = ip_address(request.remote.ip)
 
-    if remote_ip not in trusted_ips:
+    if not (ips for ips in trusted_ips if remote_ip in ips):
         return (403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
 
     try:
-        payload = request.params.get('payload')
+        payload = request.json
 
-        parsed_payload = loads(payload)
-
-        owner = parsed_payload['repository']['owner']
+        owner = payload['repository']['owner']['username']
 
         if owner != validation_data['owner']:
             return (403, 'Payload validation failed: wrong owner: %s' % owner, [])
 
-        repo = parsed_payload['repository']['slug']
+        repo = payload['repository']['name']
 
         if repo != validation_data['repo']:
             return (403, 'Payload validation failed: wrong repository: %s' % repo, [])
 
-        branches = {commit['branch'] for commit in parsed_payload['commits']}
+        branches = {change['new']['name'] for change in payload['push']['changes']}
 
         allowed_branches = set(validation_data.get('branches', branches))
 
