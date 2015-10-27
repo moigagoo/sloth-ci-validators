@@ -19,8 +19,8 @@ Usage in the app config::
 __title__ = 'sloth-ci.validators.gitlab'
 __description__ = 'GitLab validator for Sloth CI'
 __version__ = '1.0.0'
-__author__ = 'Konstantin Molchanov'
-__author_email__ = 'moigagoo@live.com'
+__author__ = 'Vladimir Akritskiy'
+__author_email__ = 'lenin.lin@gmail.com'
 __license__ = 'MIT'
 
 
