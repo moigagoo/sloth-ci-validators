@@ -1,0 +1,1 @@
+-   Vladimir Akritskiy <lenin.lin@gmail.com>, the GitLab validator
