@@ -1,4 +1,4 @@
-﻿from setuptools import setup
+from setuptools import setup
 
 import gitlab as validator
 
@@ -17,7 +17,7 @@ setup(
     packages=[package],
     package_dir={package: '.'},
     install_requires = [
-        'sloth-ci>=1.1.9'
+        'sloth-ci>=2.0.1'
     ],
     license=validator.__license__,
     classifiers=[
