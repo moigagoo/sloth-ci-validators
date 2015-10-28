@@ -1,6 +1,17 @@
-﻿'''Sloth CI validator for `Bitbucket <https://bitbucket.org/>`_ push events.
+'''Sloth CI validator for `Bitbucket <https://bitbucket.org/>`_ push events.
 
-Usage in the app config::
+Installation
+------------
+
+.. code-block:: bash
+    
+    $ pip install sloth-ci.validators.bitbucket
+
+
+Usage
+-----
+
+.. code-block:: yaml
 
     provider:
         bitbucket:
@@ -21,7 +32,7 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.8'
+__version__ = '1.0.9'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
