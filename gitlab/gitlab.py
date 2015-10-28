@@ -1,9 +1,15 @@
-﻿'''GitLab Sloth CI validator that validates the `GitLab <https://about.gitlab.com/>`_ payload against username and repo name (obtained from the Sloth app config).
+'''Sloth CI validator for `GitLab <https://about.gitlab.com/>`_ push events.
 
 Usage in the app config::
 
     provider:
         gitlab:
+            # Whitelisted GitLab servers IPs.
+            # Mandatory parameter.
+            trusted_ips:
+                - 123.45.67.89
+                - 111.22.33.44
+
             # Repository title as it appears in the URL, i.e. slug.
             # Mandatory parameter.
             repo: sloth-ci
@@ -18,44 +24,49 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.gitlab'
 __description__ = 'GitLab validator for Sloth CI'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __author__ = 'Vladimir Akritskiy'
 __author_email__ = 'lenin.lin@gmail.com'
 __license__ = 'MIT'
 
 
 def validate(request, validation_data):
-    '''Validate GitLab payload against repo name (obtained from the Sloth app config).
+    '''Check payload from GitLab: the origin IP must be genuine and the repo title must be valid.
 
-    :param request_params: payload to validate
-    :param validation_data: dictionary with the keys ``repo``, and ``branches``
+    :param request_params: `CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
+       ml#cherrypy._cprequest.Request>`_ instance representing incoming request
+    :param validation_data: dict with the keys ``trusted_ips``, ``repo``, and ``branches``, parsed from the config
 
-    :returns: (status, message, list of extracted param dicts)
+    :returns: namedtuple(status, message, list of extracted params as dicts), e.g. ``Response(status=200, message='Payload validated. Branches: default', [{'branch': 'default'}])``
     '''
 
-    from json import loads
+    from collections import namedtuple
+
+
+    response = namedtuple('Response', ('status', 'message', 'param_dicts'))
 
     if request.method != 'POST':
-        return (405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
+        return response(405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
+
+    if request.remote.ip not in validation_data['trusted_ips']:
+        return response(403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
 
     try:
-        payload = request.body.read().decode('utf8')
+        payload = request.json
 
-        parsed_payload = loads(payload)
-
-        repo = parsed_payload['repository']['name']
+        repo = payload['repository']['name']
 
         if repo != validation_data['repo']:
-            return (403, 'Payload validation failed: wrong repository: %s' % repo, [])
+            return response(403, 'Payload validation failed: wrong repository: %s' % repo, [])
 
-        branch = {parsed_payload['ref'].split('/')[-1]}
+        branch = {payload['ref'].split('/')[-1]}
 
         allowed_branches = set(validation_data.get('branches', branch))
 
         if not branch & allowed_branches:
-            return (403, 'Payload validation failed: wrong branch: %s' % branch, [])
+            return response(403, 'Payload validation failed: wrong branch: %s' % branch, [])
 
-        return (200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
+        return response(200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
 
     except Exception as e:
-        return (400, 'Payload validation failed: %s' % e, [])
+        return response(400, 'Payload validation failed: %s' % e, [])
