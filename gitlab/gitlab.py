@@ -1,10 +1,21 @@
 '''Sloth CI validator for `GitLab <https://about.gitlab.com/>`_ push events.
 
-Usage in the app config::
+Installation
+------------
+
+.. code-block:: bash
+    
+    $ pip install sloth-ci.validators.gitlab
+
+
+Usage
+-----
+
+.. code-block:: yaml
 
     provider:
         gitlab:
-            # Whitelisted GitLab servers IPs.
+            # Whitelisted GitLab server IPs.
             # Mandatory parameter.
             trusted_ips:
                 - 123.45.67.89
@@ -24,7 +35,7 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.gitlab'
 __description__ = 'GitLab validator for Sloth CI'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __author__ = 'Vladimir Akritskiy'
 __author_email__ = 'lenin.lin@gmail.com'
 __license__ = 'MIT'

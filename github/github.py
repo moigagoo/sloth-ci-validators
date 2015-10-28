@@ -1,6 +1,17 @@
 ﻿'''Sloth CI validator for `GitHub <https://github.com/>`_ push events.
 
-Usage in the app config::
+Installation
+------------
+
+.. code-block:: bash
+    
+    $ pip install sloth-ci.validators.github
+
+
+Usage
+-----
+
+.. code-block:: yaml
 
     provider:
         github:
@@ -21,7 +32,7 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.0.9'
+__version__ = '1.1.0'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
