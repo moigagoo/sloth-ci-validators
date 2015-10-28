@@ -1,4 +1,4 @@
-'''Sloth CI validator for `Bitbucket <https://bitbucket.org/>`_ push events.
+﻿'''Sloth CI validator for `Bitbucket <https://bitbucket.org/>`_ push events.
 
 Usage in the app config::
 
@@ -21,7 +21,7 @@ Usage in the app config::
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.7'
+__version__ = '1.0.8'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -30,25 +30,31 @@ __license__ = 'MIT'
 def validate(request, validation_data):
     '''Check payload from Bitbucket: the origin IP must be genuine; the repo owner and title must be valid.
 
-    :param request_params: CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
-       ml#cherrypy._cprequest.Request>`_ object instance representing the incoming request
-    :param validation_data: dictionary with the keys ``owner``, ``repo``, and ``branches``, pars
-       ed from the config
+    :param request_params: `CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
+       ml#cherrypy._cprequest.Request>`_ instance representing incoming request
+    :param validation_data: dict with the keys ``owner``, ``repo``, and ``branches``, parsed from the config
 
-    :returns: (status, message, list of extracted param dicts)
+    :returns: namedtuple(status, message, list of extracted params as dicts), e.g. ``Response(status=200, message='Payload validated. Branches: default', [{'branch': 'default'}])``
     '''
+
+    from collections import namedtuple
 
     from ipaddress import ip_address, ip_network
 
-    if request.method != 'POST':
-        return (405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
 
-    trusted_ips = (ip_network(ip_range) for ip_range in ('131.103.20.160/27', '165.254.145.0/26', '104.192.143.0/24'))
+    response = namedtuple('Response', ('status', 'message', 'param_dicts'))
+
+    if request.method != 'POST':
+        return response(405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
+
+    trusted_ip_ranges = ('131.103.20.160/27', '165.254.145.0/26', '104.192.143.0/24')
+
+    trusted_ips = (ip_network(ip_range) for ip_range in trusted_ip_ranges)
 
     remote_ip = ip_address(request.remote.ip)
 
-    if not (ips for ips in trusted_ips if remote_ip in ips):
-        return (403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
+    if not any(remote_ip in ip_range for ip_range in trusted_ips):
+        return response(403, 'Payload validation failed: Unverified remote IP: %s.' % remote_ip, [])
 
     try:
         payload = request.json
@@ -56,23 +62,23 @@ def validate(request, validation_data):
         owner = payload['repository']['owner']['username']
 
         if owner != validation_data['owner']:
-            return (403, 'Payload validation failed: wrong owner: %s' % owner, [])
+            return response(403, 'Payload validation failed: wrong owner: %s' % owner, [])
 
         repo = payload['repository']['name']
 
         if repo != validation_data['repo']:
-            return (403, 'Payload validation failed: wrong repository: %s' % repo, [])
+            return response(403, 'Payload validation failed: wrong repository: %s' % repo, [])
 
         branches = {change['new']['name'] for change in payload['push']['changes']}
 
         allowed_branches = set(validation_data.get('branches', branches))
 
         if not branches & allowed_branches:
-            return (403, 'Payload validation failed: wrong branches: %s' % branches, [])
+            return response(403, 'Payload validation failed: wrong branches: %s' % branches, [])
 
         param_dicts = [{'branch': branch} for branch in branches & allowed_branches]
 
-        return (200, 'Payload validated. Branches: %s' % ', '.join(branches), param_dicts)
+        return response(200, 'Payload validated. Branches: %s' % ', '.join(branches), param_dicts)
 
     except Exception as e:
-        return (400, 'Payload validation failed: %s' % e, [])
+        return response(400, 'Payload validation failed: %s' % e, [])
