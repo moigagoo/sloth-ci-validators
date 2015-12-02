@@ -32,7 +32,7 @@ Usage
 
 __title__ = 'sloth-ci.validators.github'
 __description__ = 'GitHub validator for Sloth CI'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -86,11 +86,11 @@ def validate(request, validation_data):
         if is_ping:
             return response(200, 'Ping payload validated', [])
 
-        branch = {payload['ref'].split('/')[-1]}
+        branch = payload['ref'].split('/')[-1]
 
         allowed_branches = set(validation_data.get('branches', branch))
 
-        if not branch & allowed_branches:
+        if not {branch} & allowed_branches:
             return response(403, 'Payload validation failed: wrong branch: %s' % branch, [])
 
         return response(200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
