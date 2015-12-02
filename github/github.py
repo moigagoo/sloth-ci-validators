@@ -90,7 +90,7 @@ def validate(request, validation_data):
 
         allowed_branches = set(validation_data.get('branches', branch))
 
-        if not {branch} & allowed_branches:
+        if branch not in allowed_branches:
             return response(403, 'Payload validation failed: wrong branch: %s' % branch, [])
 
         return response(200, 'Payload validated. Branch: %s' % branch, [{'branch': branch}])
