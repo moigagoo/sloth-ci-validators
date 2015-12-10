@@ -32,7 +32,7 @@ Usage
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.0.9'
+__version__ = '1.1.0'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -58,7 +58,7 @@ def validate(request, validation_data):
     if request.method != 'POST':
         return response(405, 'Payload validation failed: Wrong method, POST expected, got %s.' % request.method, [])
 
-    trusted_ip_ranges = ('131.103.20.160/27', '165.254.145.0/26', '104.192.143.0/24')
+    trusted_ip_ranges = ('104.192.143.192/28', '104.192.143.208/28')
 
     trusted_ips = (ip_network(ip_range) for ip_range in trusted_ip_ranges)
 
