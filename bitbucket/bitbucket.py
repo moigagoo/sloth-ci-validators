@@ -41,7 +41,7 @@ __license__ = 'MIT'
 def validate(request, validation_data):
     '''Check payload from Bitbucket: the origin IP must be genuine; the repo owner and title must be valid.
 
-    :param request_params: `CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
+    :param request: `CherryPy request <http://docs.cherrypy.org/en/latest/pkg/cherrypy.ht
        ml#cherrypy._cprequest.Request>`_ instance representing incoming request
     :param validation_data: dict with the keys ``owner``, ``repo``, and ``branches``, parsed from the config
 

@@ -16,7 +16,7 @@ setup(
     py_modules=['%s.%s' % (package, validator.__name__)],
     packages=[package],
     package_dir={package: '.'},
-    install_requires = [
+    install_requires=[
         'sloth-ci>=2.0.1'
     ],
     license=validator.__license__,
