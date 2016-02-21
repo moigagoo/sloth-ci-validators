@@ -32,7 +32,7 @@ Usage
 
 __title__ = 'sloth-ci.validators.bitbucket'
 __description__ = 'Bitbucket validator for Sloth CI'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 __author__ = 'Konstantin Molchanov'
 __author_email__ = 'moigagoo@live.com'
 __license__ = 'MIT'
@@ -69,12 +69,10 @@ def validate(request, validation_data):
     try:
         payload = request.json
 
-        owner = payload['repository']['owner']['username']
+        owner, repo = payload['repository']['full_name'].split('/')
 
         if owner != validation_data['owner']:
             return response(403, 'Payload validation failed: wrong owner: %s' % owner, [])
-
-        repo = payload['repository']['name']
 
         if repo != validation_data['repo']:
             return response(403, 'Payload validation failed: wrong repository: %s' % repo, [])
